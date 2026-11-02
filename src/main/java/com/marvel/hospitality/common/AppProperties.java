@@ -34,7 +34,6 @@ public record AppProperties(
 
     public record Kafka(
             @NotBlank String bankTransferPaymentTopic,
-            @NotBlank String deadLetterTopic,
             @Min(0) long retryAttempts,
             @NotNull Duration retryInterval) {
     }

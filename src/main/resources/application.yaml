@@ -36,6 +36,5 @@ app:
       EXTRA_LARGE: 100.00
   kafka:
     bank-transfer-payment-topic: bank-transfer-payment-update
-    dead-letter-topic: bank-transfer-payment-update.DLT
     retry-attempts: 3
     retry-interval: 1s
