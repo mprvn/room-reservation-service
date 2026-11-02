@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "reservation")
+@Table
 @Data
 @AllArgsConstructor
 public class Reservation{
@@ -97,6 +97,10 @@ public class Reservation{
   public void confirm() {
     this.status = ReservationStatus.CONFIRMED;
   }
+  public boolean isFullyPaid() {
+
+        return amountPaid.compareTo(totalAmount) >= 0;
+    }
 
   public void cancel() {
     this.status = ReservationStatus.CANCELLED;

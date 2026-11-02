@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,9 +62,16 @@ public class BankTransferPaymentService {
             }
             reservation.registerAmount(event.amountReceived());
             if(reservation.getStatus() == ReservationStatus.PENDING_PAYMENT ) {
-                reservation.confirm();
+                if(reservation.isFullyPaid()) {
+                    reservation.confirm();
+                } else {
+                    BigDecimal outstanding = reservation.getTotalAmount().subtract(reservation.getAmountPaid());
+                    log.info("Partial payment received for {} " +
+                            "paymentId for the reservation id {} " +
+                            "and outstanding amount is {}", event.paymentId(),reservation.getId(), outstanding);
+                }
             } else {
-              log.info ("Payment with id {} andd reservation id {} is cancelled a refund of {} amount will be issued",
+              log.info ("Payment with id {} and reservation id {} is cancelled a refund of {} amount will be issued",
                       event.paymentId(), reservation.getId(), event.amountReceived());
             }
          reservationRepository.save(reservation);
