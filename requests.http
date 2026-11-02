@@ -1,0 +1,69 @@
+### Cash – confirmed immediately
+POST http://localhost:8080/reservations
+Content-Type: application/json
+
+{
+  "customerName": "Chintu Jobs",
+  "roomNumber": "101",
+  "startDate": "2026-12-10",
+  "endDate": "2026-12-12",
+  "roomSegment": "LARGE",
+  "paymentMode": "CASH"
+}
+
+### Credit card – confirmed (WireMock returns CONFIRMED)
+POST http://localhost:8080/reservations
+Content-Type: application/json
+
+{
+  "customerName": "Sam Joes",
+  "roomNumber": "102",
+  "startDate": "2026-12-10",
+  "endDate": "2026-12-12",
+  "roomSegment": "SMALL",
+  "paymentMode": "CREDIT_CARD",
+  "paymentReference": "DL123456789"
+}
+
+### Credit card – rejected (reference starting with REJ) -> 422
+POST http://localhost:8080/reservations
+Content-Type: application/json
+
+{
+  "customerName": "Diana Parker",
+  "roomNumber": "103",
+  "startDate": "2026-12-10",
+  "endDate": "2026-12-12",
+  "roomSegment": "SMALL",
+  "paymentMode": "CREDIT_CARD",
+  "paymentReference": "REJ0001"
+}
+
+### Bank transfer – PENDING_PAYMENT
+POST http://localhost:8080/reservations
+Content-Type: application/json
+
+{
+  "customerName": "Ammu Rabi",
+  "roomNumber": "201",
+  "startDate": "2026-12-20",
+  "endDate": "2026-12-23",
+  "roomSegment": "EXTRA_LARGE",
+  "paymentMode": "BANK_TRANSFER"
+}
+
+### More than 30 days -> 400
+POST http://localhost:8080/reservations
+Content-Type: application/json
+
+{
+  "customerName": "Chinna Jhon",
+  "roomNumber": "202",
+  "startDate": "2026-12-01",
+  "endDate": "2027-01-05",
+  "roomSegment": "MEDIUM",
+  "paymentMode": "CASH"
+}
+
+### Get reservation
+GET http://localhost:8080/reservations/{{reservationId}}

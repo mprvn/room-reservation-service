@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: room-reservation-service
+  datasource:
+    url: 'jdbc:h2:mem:marvel'
+    username: sa
+    password: password
+    driverClassName: 'org.h2.Driver'
+  kafka:
+    consumer:
+      bootstrap-servers:
+        - ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+      group-id: room-reservation-service
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    listener:
+      ack-mode: record
+
+server:
+  port: ${SERVER_PORT:8080}
+
+app:
+  credit-card-payment:
+    base-url: ${CREDIT_CARD_PAYMENT_BASE_URL:http://localhost:9090/host/credit-card-payment-api}
+    connect-timeout: 2s
+    read-timeout: 5s
+  reservation:
+    # payment must be fully received at the latest on (startDate - N days)
+    bank-transfer-payment-deadline-days: 2
+    cancellation-cron: "0 5 0 * * *"   # every day at 00:05 (app.zone)
+    nightly-rates:
+      SMALL: 30.00
+      MEDIUM: 50.00
+      LARGE: 80.00
+      EXTRA_LARGE: 100.00
+  kafka:
+    bank-transfer-payment-topic: bank-transfer-payment-update
+    dead-letter-topic: bank-transfer-payment-update.DLT
+    retry-attempts: 3
+    retry-interval: 1s
